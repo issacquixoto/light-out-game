@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script type="text/javascript" src="./js/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //生成新表
+
+            let makeNewTable = function (width, height) {
+                let hang = [];
+
+                for (let i = 1; i <= width; i++) {
+                    hang += '<div class="hang ' + i + '" pointX="' + i + '"></div>'
+                }
+                for (let j = 1; j <= height; j++) {
+                    $('body').append('<div class="gao ' + j + '" pointY="' + j + '">' + hang + '</div>');
+                }
+            };
+
+            //点击事件
+
+            let turnColor = function (point) {
+                if (point.hasClass('active')) {
+                    point.removeClass('active')
+                }
+                else {
+                    point.addClass('active')
+                }
+            };
+
+            let offLight = function (point) {
+                turnColor(point);
+                let pointX = point.attr('pointX');
+                let pointY = point.parent().attr('pointY');
+                turnColor(point.next());
+                turnColor(point.prev());
+                turnColor($('.gao.' + (pointY - 1)).children('.hang.' + pointX));
+                turnColor($('.gao.' + (parseInt(pointY) + 1)).children('.hang.' + pointX));
+            };
+
+            let clickLight = function () {
+                $('.hang').click(function () {
+                    offLight($(this));
+                });
+            };
+
+            makeNewTable(5, 5);
+            clickLight();
+
+            $('input[type=submit].submit').click(function () {
+                $('.gao').remove();
+                makeNewTable($('#hang').val(), $('#gao').val());
+                clickLight();
+            });
+        })
+    </script>
+    <style type="text/css">
+        body {
+            font-size: 12px;
+            text-align: center;
+            margin: 0;
+        }
+        input[type=text] {
+            width: 50px;
+        }
+        .gao {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .hang {
+            border: 1px silver solid;
+            background: #ee9900;
+            width: 40px;
+            height: 40px;
+        }
+
+        .hang.active {
+            background: #00B0F6;
+        }
+    </style>
+</head>
+<body>
+<div style="margin: 20px auto">
+    <label for="hang">长：</label><input type="text" id="hang" value="3">
+    <label for="gao">高：</label><input type="text" id="gao" value="3">
+    <input type="submit" class="submit">
+</div>
+
+</body>
+</html>
